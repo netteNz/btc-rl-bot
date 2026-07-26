@@ -1,0 +1,186 @@
+{
+  "scan_metadata": {
+    "generated_at_utc": "2026-07-26T04:17:46.883748+00:00",
+    "root_dir": "D:\\code\\agentic-development\\coinbase-rl-bot",
+    "scanner_version": "0.1.0",
+    "apply_mode": "dry-run"
+  },
+  "artifacts": [
+    {
+      "path": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_leaderboard.csv",
+      "kind": "csv_artifact",
+      "exists": false,
+      "readable": false,
+      "issues": [
+        {
+          "code": "missing_file",
+          "severity": "medium",
+          "action_class": "needs_manual_review",
+          "message": "File does not exist: D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_leaderboard.csv",
+          "artifact": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_leaderboard.csv",
+          "row_index": null,
+          "run_label": null,
+          "extra": null,
+          "recommendation": null
+        }
+      ]
+    },
+    {
+      "path": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_reward_leaderboard.csv",
+      "kind": "csv_artifact",
+      "exists": false,
+      "readable": false,
+      "issues": [
+        {
+          "code": "missing_file",
+          "severity": "medium",
+          "action_class": "needs_manual_review",
+          "message": "File does not exist: D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_reward_leaderboard.csv",
+          "artifact": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_reward_leaderboard.csv",
+          "row_index": null,
+          "run_label": null,
+          "extra": null,
+          "recommendation": null
+        }
+      ]
+    },
+    {
+      "path": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_leaderboard_history.csv",
+      "kind": "csv_artifact",
+      "exists": false,
+      "readable": false,
+      "issues": [
+        {
+          "code": "missing_file",
+          "severity": "medium",
+          "action_class": "needs_manual_review",
+          "message": "File does not exist: D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_leaderboard_history.csv",
+          "artifact": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_leaderboard_history.csv",
+          "row_index": null,
+          "run_label": null,
+          "extra": null,
+          "recommendation": null
+        }
+      ]
+    },
+    {
+      "path": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_reward_leaderboard_history.csv",
+      "kind": "csv_artifact",
+      "exists": false,
+      "readable": false,
+      "issues": [
+        {
+          "code": "missing_file",
+          "severity": "medium",
+          "action_class": "needs_manual_review",
+          "message": "File does not exist: D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_reward_leaderboard_history.csv",
+          "artifact": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_reward_leaderboard_history.csv",
+          "row_index": null,
+          "run_label": null,
+          "extra": null,
+          "recommendation": null
+        }
+      ]
+    }
+  ],
+  "snapshots": [],
+  "orphaned_models": [
+    {
+      "path": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_snapshots\\model_20260726-041638Z_smoketest_seed7_1h.zip",
+      "action_class": "safe_delete",
+      "message": "Model artifact is not referenced by scanned CSV rows."
+    }
+  ],
+  "downstream_dependencies": [
+    {
+      "script_path": "D:\\code\\agentic-development\\coinbase-rl-bot\\scripts\\evaluate_sweep.py",
+      "pattern": "experiment_leaderboard",
+      "type": "read_leaderboard",
+      "risk": "Script depends on clean leaderboard data; apply may affect results."
+    },
+    {
+      "script_path": "D:\\code\\agentic-development\\coinbase-rl-bot\\scripts\\generate_ensemble_config.py",
+      "pattern": "experiment_leaderboard",
+      "type": "read_leaderboard",
+      "risk": "Script depends on clean leaderboard data; apply may affect results."
+    },
+    {
+      "script_path": "D:\\code\\agentic-development\\coinbase-rl-bot\\scripts\\sanity_scan.py",
+      "pattern": "experiment_leaderboard",
+      "type": "read_leaderboard",
+      "risk": "Script depends on clean leaderboard data; apply may affect results."
+    },
+    {
+      "script_path": "D:\\code\\agentic-development\\coinbase-rl-bot\\src\\ensemble.py",
+      "pattern": "data/experiment_",
+      "type": "read_leaderboard",
+      "risk": "Script depends on clean leaderboard data; apply may affect results."
+    },
+    {
+      "script_path": "D:\\code\\agentic-development\\coinbase-rl-bot\\src\\experiments.py",
+      "pattern": "experiment_leaderboard",
+      "type": "read_leaderboard",
+      "risk": "Script depends on clean leaderboard data; apply may affect results."
+    }
+  ],
+  "json_validation": [],
+  "quarantine_rows": [],
+  "all_issues": [
+    {
+      "code": "missing_file",
+      "severity": "medium",
+      "action_class": "needs_manual_review",
+      "message": "File does not exist: D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_leaderboard.csv",
+      "artifact": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_leaderboard.csv",
+      "row_index": null,
+      "run_label": null,
+      "extra": null,
+      "recommendation": null
+    },
+    {
+      "code": "missing_file",
+      "severity": "medium",
+      "action_class": "needs_manual_review",
+      "message": "File does not exist: D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_reward_leaderboard.csv",
+      "artifact": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_reward_leaderboard.csv",
+      "row_index": null,
+      "run_label": null,
+      "extra": null,
+      "recommendation": null
+    },
+    {
+      "code": "missing_file",
+      "severity": "medium",
+      "action_class": "needs_manual_review",
+      "message": "File does not exist: D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_leaderboard_history.csv",
+      "artifact": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_leaderboard_history.csv",
+      "row_index": null,
+      "run_label": null,
+      "extra": null,
+      "recommendation": null
+    },
+    {
+      "code": "missing_file",
+      "severity": "medium",
+      "action_class": "needs_manual_review",
+      "message": "File does not exist: D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_reward_leaderboard_history.csv",
+      "artifact": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_reward_leaderboard_history.csv",
+      "row_index": null,
+      "run_label": null,
+      "extra": null,
+      "recommendation": null
+    }
+  ],
+  "summary": {
+    "high_severity_issue_count": 0,
+    "sanitize_row_count": 0,
+    "archive_only_count": 0,
+    "safe_delete_count": 1,
+    "needs_code_patch_count": 0,
+    "needs_manual_review_count": 4,
+    "downstream_dependencies": 5,
+    "json_validation_issues": 0,
+    "snapshot_csvs_scanned": 0,
+    "quarantine_rows": 0
+  }
+}

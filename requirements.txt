@@ -1,0 +1,8 @@
+coinbase-advanced-py
+gymnasium
+stable-baselines3
+pandas
+pyarrow
+numpy
+python-dotenv
+pytest
