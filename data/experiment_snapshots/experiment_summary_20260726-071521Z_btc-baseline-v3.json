@@ -1,10 +1,10 @@
 {
   "rows": 45,
   "generated_at_utc": "20260726-071521Z",
-  "leaderboard_path": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_leaderboard.csv",
-  "reward_leaderboard_path": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_reward_leaderboard.csv",
-  "leaderboard_history_path": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_leaderboard_history.csv",
-  "reward_leaderboard_history_path": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_reward_leaderboard_history.csv",
+  "leaderboard_path": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_snapshots\\experiment_leaderboard_20260726-071521Z_btc-baseline-v3.csv",
+  "reward_leaderboard_path": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_snapshots\\experiment_reward_leaderboard_20260726-071521Z_btc-baseline-v3.csv",
+  "leaderboard_history_path": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_snapshots\\experiment_leaderboard_history_20260726-071521Z_btc-baseline-v3.csv",
+  "reward_leaderboard_history_path": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_snapshots\\experiment_reward_leaderboard_history_20260726-071521Z_btc-baseline-v3.csv",
   "leaderboard_version": 1,
   "top3": [
     {
@@ -298,12 +298,5 @@
       "high_return_cv_risk": 0,
       "robustness_score": 0.4015128292818756
     }
-  ],
-  "snapshot_paths": {
-    "leaderboard": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_snapshots\\experiment_leaderboard_20260726-071521Z_btc-baseline-v3.csv",
-    "reward_leaderboard": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_snapshots\\experiment_reward_leaderboard_20260726-071521Z_btc-baseline-v3.csv",
-    "leaderboard_history": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_snapshots\\experiment_leaderboard_history_20260726-071521Z_btc-baseline-v3.csv",
-    "reward_leaderboard_history": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_snapshots\\experiment_reward_leaderboard_history_20260726-071521Z_btc-baseline-v3.csv",
-    "summary": "D:\\code\\agentic-development\\coinbase-rl-bot\\data\\experiment_snapshots\\experiment_summary_20260726-071521Z_btc-baseline-v3.json"
-  }
+  ]
 }
