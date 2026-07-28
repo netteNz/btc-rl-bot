@@ -25,7 +25,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from src.feature_engineering import compute_cyclical_time_features, compute_stationary_features
+from src.feature_engineering import (
+    compute_cyclical_time_features,
+    compute_stationary_features,
+    compute_vol_and_seasonality_features,
+)
 from src.products import BENCHMARK_PRODUCT, resolve_product
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
@@ -150,8 +154,49 @@ def build_normalized_frame(raw: pd.DataFrame) -> pd.DataFrame:
     norm_cols = ["Open", "High", "Low", "Close", "Volume"]
     frame[norm_cols] = frame[norm_cols].replace([np.inf, -np.inf], np.nan).fillna(0.0)
     frame["RawClose"] = cleaned["Close"].to_numpy()
+    frame["RawVolume"] = cleaned["Volume"].to_numpy()
 
     return frame
+
+
+# HANDOFF.md Branch E Phase E1 (2026-07-27): which secondary product's cross-rate return to
+# add when training on a given primary product. Only BTC-USD has one -- ETH/SOL trading is
+# blocked until BTC promotes (CLAUDE.md), so there's no cross-rate hypothesis defined for
+# those as the primary yet.
+CROSS_RATE_SECONDARY_PRODUCT = {"BTC-USD": "ETH-USD"}
+
+
+def compute_cross_rate_feature(primary_normalized: pd.DataFrame, primary_product_id: str, interval: str) -> np.ndarray:
+    """
+    EthBtcRelReturn = secondary product's log return minus the primary's own log return,
+    aligned to the primary's Date grid. Requires the secondary already backfilled
+    (data/raw/<SECONDARY>.parquet) -- raises the same FileNotFoundError as load_raw_ohlcv if not.
+
+    Secondary dates are ffilled onto the primary's grid across any gaps (rare -- see
+    src/backfill.py's own gap-ratio warning) rather than dropping rows, since dropping would
+    silently shrink the training window in a way unrelated to the primary product's own data
+    quality.
+
+    Returns an all-zero (neutral) array when no secondary is configured for this primary, so
+    callers don't need a branch.
+    """
+    secondary_id = CROSS_RATE_SECONDARY_PRODUCT.get(primary_product_id)
+    if secondary_id is None:
+        return np.zeros(len(primary_normalized))
+
+    secondary_raw = load_raw_ohlcv(secondary_id)
+    if interval == "4h":
+        secondary_raw = resample_to_4h(secondary_raw)
+
+    secondary_close = secondary_raw.set_index("Date")["Close"].sort_index()
+    primary_dates = pd.to_datetime(primary_normalized["Date"])
+    aligned_close = secondary_close.reindex(primary_dates).ffill()
+    secondary_log_return = np.log(aligned_close / aligned_close.shift(1)).fillna(0.0).to_numpy()
+
+    primary_close = primary_normalized["RawClose"]
+    primary_log_return = np.log(primary_close / primary_close.shift(1)).fillna(0.0).to_numpy()
+
+    return secondary_log_return - primary_log_return
 
 
 def get_crypto_training_data(
@@ -183,6 +228,7 @@ def get_crypto_training_data(
 
     normalized = build_normalized_frame(raw)
     cyclical = compute_cyclical_time_features(normalized)
+    vol_seasonality = compute_vol_and_seasonality_features(normalized)
 
     if use_stationary_features:
         indicators = compute_stationary_features(normalized)
@@ -193,6 +239,11 @@ def get_crypto_training_data(
 
     for col in ["HourSin", "HourCos", "DowSin", "DowCos"]:
         training_data[col] = cyclical[col].to_numpy()
+
+    for col in ["VolRatio_6_48", "RelVolumeByHourOfWeek"]:
+        training_data[col] = vol_seasonality[col].to_numpy()
+
+    training_data["EthBtcRelReturn"] = compute_cross_rate_feature(normalized, product_id, interval)
 
     training_data = training_data.sort_values("Date").reset_index(drop=True)
     _validate_training_data_quality(training_data, interval=interval)

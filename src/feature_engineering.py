@@ -2,6 +2,19 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+# Single source of truth for the env's observation columns and the signal probe's feature
+# set (HANDOFF.md Branch E Step 0: these two lists were hand-duplicated between
+# src/env/trading_env.py and scripts/signal_probe.py, which is exactly the kind of thing
+# that silently drifts -- both now import this instead).
+STATIONARY_FEATURE_COLUMNS = [
+    "LogReturn", "VolLogDiff", "RelRange", "RelOpen", "RelMACD", "RSI_Centered",
+    "RelATR", "BB_Width", "BB_Upper_Dist", "BB_Lower_Dist", "SMA_Trend",
+    "RelVWAP", "MACD_Signal_Rel", "MACD_Hist_Rel",
+    "HourSin", "HourCos", "DowSin", "DowCos",
+    "VolRatio_6_48", "RelVolumeByHourOfWeek",
+    "EthBtcRelReturn",
+]
+
 
 def compute_stationary_features(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -138,4 +151,50 @@ def compute_cyclical_time_features(df: pd.DataFrame) -> pd.DataFrame:
     feat["DowSin"] = np.sin(2.0 * np.pi * dow / 7.0)
     feat["DowCos"] = np.cos(2.0 * np.pi * dow / 7.0)
 
+    return feat
+
+
+def compute_vol_and_seasonality_features(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    HANDOFF.md Branch E, Phase E0 (2026-07-27): candidate features probed after
+    scripts/signal_probe.py found no confirmed edge in the original 14 ported indicators +
+    4 cyclical columns. Kept separate from compute_stationary_features so that function's
+    "ported unchanged from the stock bot" provenance stays honest -- these are new,
+    crypto-batch-specific, not part of the port.
+
+    Requires the output of build_normalized_frame() (needs RawClose, RawVolume, Date).
+
+    VolRatio_6_48: short-window (6-bar) realized vol / longer-window (48-bar) realized vol.
+    A vol-regime term-structure ratio -- crypto vol is known to cluster and this set has
+    nothing that captures regime shifts directly (BB_Width is level, not ratio-of-windows).
+
+    RelVolumeByHourOfWeek: current bar's volume relative to the trailing historical average
+    volume for the same (day-of-week, hour-of-day) bucket. Operationalizes CLAUDE.md's
+    "weekend liquidity thinning / Asia-US session flow" hypothesis, which until now only had
+    time-of-day encoding (HourSin/Cos, DowSin/Cos) with nothing tying it to volume.
+    Strictly trailing: shift(1) before the expanding mean, so a bar never sees its own volume
+    in its own bucket average -- the one place a naive version of this would leak.
+    """
+    close_col = "RawClose" if "RawClose" in df.columns else "Close"
+    close = df[close_col]
+
+    feat = pd.DataFrame(index=df.index)
+    if "Date" in df.columns:
+        feat["Date"] = df["Date"]
+
+    log_return = np.log(close / close.shift(1))
+    vol_short = log_return.rolling(window=6).std()
+    vol_long = log_return.rolling(window=48).std()
+    feat["VolRatio_6_48"] = (vol_short / (vol_long + 1e-9)).fillna(0.0)
+
+    if "RawVolume" in df.columns and "Date" in df.columns:
+        dates = pd.to_datetime(df["Date"])
+        bucket = dates.dt.dayofweek.astype(str) + "_" + dates.dt.hour.astype(str)
+        volume = df["RawVolume"]
+        trailing_avg = volume.groupby(bucket).transform(lambda s: s.shift(1).expanding().mean())
+        feat["RelVolumeByHourOfWeek"] = (volume / (trailing_avg + 1e-9)).fillna(1.0)
+    else:
+        feat["RelVolumeByHourOfWeek"] = 1.0
+
+    feat = feat.replace([np.inf, -np.inf], np.nan).fillna(0.0)
     return feat

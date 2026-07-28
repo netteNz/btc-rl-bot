@@ -6,3 +6,4 @@ pyarrow
 numpy
 python-dotenv
 pytest
+scikit-learn

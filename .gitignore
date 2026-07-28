@@ -2,3 +2,5 @@
 .env
 __pycache__/
 data/raw/*.parquet
+.pytest_cache/
+.claude/
